@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import CustomAlert from '../components/CustomAlert';
 import globalStyles from '../constants/styles';
+import pizzeto from '../img/pizzeto.png'
 
 function ShopItem(props) {
 
@@ -16,6 +17,8 @@ function ShopItem(props) {
     const [alertVariant, setAlertVariant] = useState('danger');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
+
+    const history = useHistory();
 
     const onAmountChange = (e) => {
         setAmount(e.target.value);
@@ -30,29 +33,31 @@ function ShopItem(props) {
             setShowAlert(true);
             return;
         }
+
+        history.push(`/checkout/${item._id}?amount=${amount}`);
     }
 
     return (
         <div>
             <CustomAlert
-				variant={alertVariant}
-				message={alertMessage} 
-				show={showAlert} 
-				onClose={() => {setShowAlert(false)}}
-			/>
+                variant={alertVariant}
+                message={alertMessage}
+                show={showAlert}
+                onClose={() => { setShowAlert(false) }}
+            />
             <Row>
                 <Col>
-                    <Image style={styles.image} thumbnail src={item.image}/>
+                    <Image style={styles.image} thumbnail src={item.imgUrl} />
                 </Col>
                 <Col>
                     <div style={styles.desc}>
                         <h1 style={styles.name}>{item.name}</h1>
-                        <h3>${item.price}</h3>
+                        <h3>{item.currency === "PZT" ? <Image src={pizzeto} style={styles.pizzeto}/> : <span>$</span>}{item.price}</h3>
                         <p style={styles.longDesc}>{item.longDesc}</p>
                         <Form.Group as={Row}>
                             <Form.Label column sm={4}>Enter amount</Form.Label>
                             <Col sm={8}>
-                                <Form.Control min={1} type="number" value={amount} onChange={onAmountChange}/>
+                                <Form.Control min={1} type="number" value={amount} onChange={onAmountChange} />
                             </Col>
                         </Form.Group>
                         <Button
@@ -94,7 +99,15 @@ const styles = {
     },
     longDesc: {
         marginTop: '20px'
-    }
+    },
+    pizzeto: {
+        position: 'relative',
+        width: '40x',
+        height: '40px',
+        bottom: '5px',
+        marginLeft: '9px',
+        marginRight: '5px',
+    },
 }
 
 export default ShopItem

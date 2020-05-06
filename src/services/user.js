@@ -1,7 +1,7 @@
 import {SERVER_URL} from '../config';
 
 export function getUserInfo(userId) {
-    let url = `${SERVER_URL}/get/user/${userId}`
+    let url = `${SERVER_URL}/get/usersWithGames/${userId}`
     let settings = {
         method: "GET"
     }
@@ -15,7 +15,7 @@ export function getUserInfo(userId) {
             throw new Error(response.statusText)
         })
         .then(responseJSON => {
-            return responseJSON.foundUser;
+            return responseJSON;
         })
 }
 
@@ -30,14 +30,36 @@ export function updateUserInfo(userId, updatedUser) {
     }
 
     return fetch(url, settings)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
 
-                throw new Error(response);
-            })
-            .then(responseJSON => {
-                return responseJSON
-            })
+            throw new Error(response);
+        })
+        .then(responseJSON => {
+            return responseJSON
+        })
 }
+
+export function uploadPofilePicture(userId, filesraw) {
+    const files = Array.from(filesraw)
+
+    const formData = new FormData()
+
+    files.forEach((file, i) => {
+      formData.append(i, file)
+    })
+
+    console.log(formData)
+
+    return fetch(`${SERVER_URL}/update/user/${userId}/profilepic`, {
+        method: 'PUT',
+        body: formData,
+    })
+    .then(res => res.json())
+    .then(response => {
+        return response.success
+    })
+}
+
