@@ -272,6 +272,13 @@ class Multiplayer1v4State extends State {
 
   private handleEnterGame(packet: EnterGame1v4Packet): void {
     const data = packet.data;
+
+    // clear boards
+    for (let i = 0; i < this.otherBoards.length; i++) {
+      this.otherBoards[i] = new OtherBoard(this.cntOtherBoards[i], 16);
+    }
+    this.otherPlayersMap = {};
+
     data.others.forEach(other => {
       const playerInfo: OtherPlayerInfo = {
         id: other.id,
@@ -310,15 +317,15 @@ class Multiplayer1v4State extends State {
   }
 
   private handleGameOver(packet: GameOverPacket): void {
-    Object.values(this.otherPlayersMap).forEach(other => {
-      if (other.id === packet.data.whoID) {
-        other.board.gameOver = true;
-      }
-    })
+    this.otherPlayersMap[packet.data.whoID].board.gameOver = true;
   }
 
   private handleEndGame(packet: EndGamePacket): void {
     Game.history.push(`/results/${packet.data.gameID}`);
+    this.internalState = InternalState.NONE;
+    this.cntMenu.setVisible(true);
+    this.cntGame.setVisible(false);
+    this.txtStatus.text = `Press 'Space' to enter game queue.`;
   }
 }
 
