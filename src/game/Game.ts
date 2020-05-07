@@ -3,24 +3,31 @@ import {InputEvent} from './InputHandler';
 import SingleplayerState from './states/SingleplayerState';
 import Multiplayer1v1State from './states/Multiplayer1v1State';
 import { GameUser } from './GameContainer';
+import Multiplayer1v4State from './states/Multiplayer1v4State';
 
 export const Screen = {
   width: 1080,
   height: 800,
 };
 
+type PoorMansUnknown = {} | null | undefined;
+
 class Game {
   private g: CanvasRenderingContext2D;
   private currentState: State;
   public static user: GameUser;
+  public static history: any;
 
-  constructor(g: CanvasRenderingContext2D, state: GameState, user: GameUser) {
+  constructor(g: CanvasRenderingContext2D, state: GameState, user: GameUser, history: any) {
     this.g = g;
-    this.currentState = SingleplayerState.getInstance();
     Game.user = user;
+    Game.history = history;
+    this.currentState = SingleplayerState.getInstance();
 
     if (state === GameState.MULTIPLAYER_1v1) {
       this.currentState = Multiplayer1v1State.getInstance();
+    } else if (state === GameState.MULTIPLAYER_1v4) {
+      this.currentState = Multiplayer1v4State.getInstance();
     }
   }
 
